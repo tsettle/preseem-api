@@ -78,26 +78,17 @@ I'm probably not going to publish this anywhere but github, so you'll need to le
 
 ```
 {
-    "name": "myself/myproject",
-    "description": "My awesome project to manage Preseem",
-    "license": "private",
-    "repositories": {
-      "preseem-api": {
-        "type": "package",
-        "package": {
-          "name": "troy/preseem-api",
-          "version": "1.0",
-          "source": {
-            "url": "https://github.com/tsettle/preseem-api.git",
-            "type": "git",
-            "reference": "origin/main"
-          }
-        }
-      }
-    },
+    "name": "api/test",
+    "description": "",
     "require": {
-      "troy/preseem-api":"1.0"
-    }
+        "troy/preseem-api": "@dev"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/tsettle/preseem-api.git"
+        }
+    ]
 }
 ```
 
