@@ -104,6 +104,5 @@ I'm probably not going to publish this anywhere but github, so you'll need to le
 Oh, if you're reading this, you probably don't need me to tell you that once you've put all that into composer.json, you need to run `composer install` or something.
 
 # License
-It looks like Amir has the LGPL, so I have to use the LGPL. One of the least open open source licenses there is, but I digress... I'm sure you're not here to discuss the politics of FOSS licensing.
 
-The license file is in here somewhere.  If there's anything else I need to do to stroke RMS's ego, let me know.
+No clue which Garbage Public License I should be using, so I copyied Amir's license, which is LGPL in composer.json, and AGPL in the license file.  Let me know what, if anything, I need to change to avoid the wrath of RMS.
