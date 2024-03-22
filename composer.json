@@ -1,0 +1,20 @@
+{
+    "name": "troy/preseem-api",
+    "description": "Doing stuff with Preseem",
+    "type": "library",
+    "license": "LGPL-2.1",
+    "autoload": {
+        "psr-4": {
+            "Preseem\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Troy Settle",
+            "email": "troy.settle@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.0"
+    }
+}

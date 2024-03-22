@@ -1,0 +1,18 @@
+<?php
+
+# Secret API key from Preseem
+$preseem_key = '';
+
+# Preseem API URL (default)
+$preseem_url = 'https://api.preseem.com/model/v1/';
+
+/**
+ **  need a place to write some logs
+ **/
+
+
+function storage_path($arg='') {
+  //return (__DIR__ . '/' . $arg);
+  return('/dev/null');
+}
+
