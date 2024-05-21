@@ -139,7 +139,7 @@ class Preseem
             $this->logger('INFO', $this->getResponseMessage($object, $action, $response_code) . ' - Data Returned: ' . trim($data));
         }
 
-        return json_decode($data);
+        return json_decode($data,true);
     }
 
     public function setServer($server = '')
