@@ -139,7 +139,7 @@ class Preseem
             $this->logger('INFO', $this->getResponseMessage($object, $action, $response_code) . ' - Data Returned: ' . trim($data));
         }
 
-        return json_decode($data,true);
+        return json_decode($data);
     }
 
     public function setServer($server = '')
@@ -162,10 +162,28 @@ class Preseem
      * @param  mixed $limit
      * @return void
      */
-    function list($object, $page = 1, $limit = 500) {
+
+    public function list($object, $page = 1, $limit = 500) {
         $this->logger('INFO', json_encode(['object' => $object]));
         return $this->send($object, ($object . '?' . http_build_query(['page' => $page, 'limit' => $limit])), 'LIST');
     }
+
+    /**
+     * dump method will dump all the entities without pagination
+     */
+
+     public function dump($object) {
+        $page = 1;
+        $array = [];
+        while(true) {
+            $res = $this->list($object,$page);
+            $array = array_merge($array,$res->data);
+            if($page++ > $res->paginator->page_count) break;
+        }
+        return($array);
+ 
+    }
+
     public function create($object, $params)
     {
         $this->logger('INFO', json_encode(['object' => $object, $params]));
@@ -200,133 +218,6 @@ class Preseem
         return $results;
     }
 
-    /**
-     * api_access_points_create will create new access points in preseem
-     *
-     * @param  mixed $params
-     * @return void
-     */
-    public function api_access_points_create($params = array())
-    {
-        $messages = array();
-        if (!array_key_exists('id', $params) || (isset($params['id']) && !is_string($params['id']))) {
-            $messages[] = 'Unique id for access point not set.  Type: String';
-        }
-        if (!array_key_exists('name', $params) || (isset($params['name']) && !is_string($params['name']))) {
-            $messages[] = 'Name for access point not set.  Type: String';
-        }
-        if (!array_key_exists('tower', $params) || (isset($params['tower']) && !is_string($params['tower']))) {
-            $messages[] = 'Tower for access point not set.  Type: String';
-        }
-        if (!array_key_exists('ip_address', $params) || (isset($params['ip_address']) && !is_string($params['ip_address']))) {
-            $messages[] = 'IP Address for access point not set.  Type: String';
-        }
-        !empty($messages) && $this->logger('FATAL', 'Missing Data: ' . json_encode($messages));
-        return $this->create('access_points', $params);
-    }
-
-    /**
-     * api_accounts_create method will create new accounts in preseem
-     *
-     * @param  mixed $params
-     * @return void
-     */
-    public function api_accounts_create($params = array())
-    {
-        $messages = array();
-        if (!array_key_exists('id', $params) || (isset($params['id']) && !is_string($params['id']))) {
-            $messages[] = 'Unique id for account not set.  Type: String';
-        }
-        if (!array_key_exists('name', $params) || (isset($params['name']) && !is_string($params['name']))) {
-            $messages[] = 'Name for account not set.  Type: String';
-        }
-        !empty($messages) && $this->logger('FATAL', 'Missing Data: ' . json_encode($messages));
-        return $this->create('accounts', $params);
-    }
-
-    /**
-     * api_packages_create method will create new packages in preseem
-     *
-     * @param  mixed $params
-     * @return void
-     */
-    public function api_packages_create($params = array())
-    {
-        $messages = array();
-        if (!array_key_exists('id', $params) || (isset($params['id']) && !is_string($params['id']))) {
-            $messages[] = 'Unique id for package not set.  Type: String';
-        }
-        if (!array_key_exists('name', $params) || (isset($params['name']) && !is_string($params['name']))) {
-            $messages[] = 'Name for package not set.  Type: String';
-        }
-        if (array_key_exists('up_speed', $params) && (!is_integer($params['up_speed']) || intval($params['up_speed']) < 0)) {
-            $messages[] = 'The upstream rate limit, in Kbps. A value of 0 is treated as not set. If not set, this field is omitted in the returned json. A negative speed returns a 400 error.  Type: Integer';
-        }
-        if (array_key_exists('down_speed', $params) && (!is_integer($params['down_speed']) || intval($params['down_speed']) < 0)) {
-            $messages[] = 'The downstream rate limit, in Kbps. A value of 0 is treated as not set. If not set, this field is omitted in the returned json. A negative speed returns a 400 error.  Type: Integer';
-        }
-        !empty($messages) && $this->logger('FATAL', 'Missing Data: ' . json_encode($messages));
-        return $this->create('packages', $params);
-    }
-
-    /**
-     * api_services_create method will create new services in preseem
-     *
-     * @param  mixed $params
-     * @return void
-     */
-    public function api_services_create($params = array())
-    {
-        $messages = array();
-        if (!array_key_exists('id', $params) || (isset($params['id']) && !is_string($params['id']))) {
-            $messages[] = 'Unique id for service not set.  Type: String';
-        }
-        if (!array_key_exists('account', $params) || (isset($params['account']) && !is_string($params['account']))) {
-            $messages[] = 'Account id for the service. This id is just a reference to an account, the account doesn\'t have to exist, but when it does, the service gets attached to the account.  Type: String';
-        }
-        if (array_key_exists('attachments', $params)) {
-            if (count($params['attachments']) < 1) {
-                $messages[] = 'Service attachments array must not be empty';
-            }
-            foreach ($params['attachments'] as $attachment) {
-                if (!property_exists($attachment, 'cpe_mac') && !property_exists($attachment, 'network_prefixes')) {
-                    $messages[] = 'If provided, service attachments objects must contain one property: cpe_mac or network_prefixes.  Type: String';
-                }
-            }
-        }
-        if (array_key_exists('up_speed', $params) && (!is_integer($params['up_speed']) || intval($params['up_speed']) < 0)) {
-            $messages[] = 'The upstream rate limit, in Kbps. A value of 0 is treated as not set. If not set, this field is omitted in the returned json. A negative speed returns a 400 error.  Type: Integer';
-        }
-        if (array_key_exists('down_speed', $params) && (!is_integer($params['down_speed']) || intval($params['down_speed']) < 0)) {
-            $messages[] = 'The downstream rate limit, in Kbps. A value of 0 is treated as not set. If not set, this field is omitted in the returned json. A negative speed returns a 400 error.  Type: Integer';
-        }
-        if (array_key_exists('package', $params) && !is_string($params['package'])) {
-            $messages[] = 'Package id of the service.  Type: String';
-        }
-        if (array_key_exists('parent_device_id', $params) && !is_string($params['parent_device_id'])) {
-            $messages[] = 'Parent device id does not exist. This is the unique id for the parent device. E.g. An access point.  Type: String';
-        }
-        return !empty($messages) ? json_encode($messages) . $this->logger('FATAL', 'Missing Data: ' . json_encode($messages)) : $this->create('services', $params);
-    }
-
-    /**
-     * api_sites_create method will create new sites in preseem
-     *
-     * @param  mixed $params
-     * @return void
-     */
-    public function api_sites_create($params = array())
-    {
-        $messages = array();
-        if (!array_key_exists('id', $params) || (isset($params['id']) && !is_string($params['id']))) {
-            $messages[] = 'Unique id for site not set.  Type: String';
-        }
-        if (!array_key_exists('name', $params) || (isset($params['name']) && !is_string($params['name']))) {
-            $messages[] = 'Name for site not set.  Type: String';
-        }
-        !empty($messages) && $this->logger('FATAL', 'Missing Data: ' . json_encode($messages));
-        return $this->create('sites', $params);
-    }
 
     /**
      * Logs your messages into storage/logs/preseem.log filr
