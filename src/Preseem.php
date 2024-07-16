@@ -226,7 +226,7 @@ class Preseem
      * @param  mixed $message
      * @return void
      */
-    public function logger($error_level = 'info', $message)
+    public function logger($error_level = 'info', $message = '')
     {
         global $timestamp;
         global $pid;
